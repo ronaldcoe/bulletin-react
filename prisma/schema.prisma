@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ar_internal_metadata {
+  key        String   @id @db.VarChar
+  value      String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model comments {
+  id                   BigInt             @id @default(autoincrement())
+  content              String?
+  user_id              BigInt
+  discussion_thread_id BigInt
+  created_at           DateTime           @db.Timestamp(6)
+  updated_at           DateTime           @db.Timestamp(6)
+  users                users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_03de2dc08c")
+  discussion_threads   discussion_threads @relation(fields: [discussion_thread_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_9f58e90430")
+
+  @@index([discussion_thread_id], map: "index_comments_on_discussion_thread_id")
+  @@index([user_id], map: "index_comments_on_user_id")
+}
+
+model discussion_threads {
+  id         BigInt     @id @default(autoincrement())
+  title      String?    @db.VarChar
+  content    String?
+  locked     Boolean?
+  user_id    BigInt
+  created_at DateTime   @db.Timestamp(6)
+  updated_at DateTime   @db.Timestamp(6)
+  comments   comments[]
+  users      users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_db22b5e7b4")
+  likes      likes[]
+
+  @@index([user_id], map: "index_discussion_threads_on_user_id")
+}
+
+model likes {
+  id                   BigInt             @id @default(autoincrement())
+  user_id              BigInt
+  discussion_thread_id BigInt
+  created_at           DateTime           @db.Timestamp(6)
+  updated_at           DateTime           @db.Timestamp(6)
+  users                users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_1e09b5dabf")
+  discussion_threads   discussion_threads @relation(fields: [discussion_thread_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_21ee0d1bf3")
+
+  @@index([discussion_thread_id], map: "index_likes_on_discussion_thread_id")
+  @@index([user_id], map: "index_likes_on_user_id")
+}
+
+model schema_migrations {
+  version String @id @db.VarChar
+}
+
+model users {
+  id                 BigInt               @id @default(autoincrement())
+  name               String?              @db.VarChar
+  email              String @unique       @db.VarChar
+  password_digest    String?              @db.VarChar
+  created_at         DateTime             @db.Timestamp(6)
+  updated_at         DateTime             @db.Timestamp(6)
+  comments           comments[]
+  discussion_threads discussion_threads[]
+  likes              likes[]
+}
