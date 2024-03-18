@@ -3,11 +3,12 @@ import Image from "next/image";
 import { Thread } from "./interfaces/Thread";
 import CardDash from "./components/CardDash";
 import { useEffect, useState } from "react";
+import { useAuth } from "./context/AuthContext";
 export default function Home() {
 
   const [threads, setThreads] = useState<Thread[]>([]);
-
-
+  const [filter, setFilter] = useState<string | null>(null);
+  const {user} = useAuth();
   useEffect(() => {
     const getData = async () => {
    
@@ -30,6 +31,24 @@ export default function Home() {
     getData();
   },[])
 
+  const currentUser = user?.name;
+  // Filter threads
+  function filterThreads(threads:any, filter:any, currentUser:any) {
+    switch (filter) {
+      case 'relevance':
+        // Assuming relevance is determined by the sum of likes and comments
+        return threads.slice().sort((a:any, b:any) => 
+          (b.likes.length + b.comments.length) - (a.likes.length + a.comments.length));
+      case 'mine':
+        return threads.filter((thread: any) => thread.users.name === currentUser);
+
+      case 'all':
+      default:
+        return threads.slice().sort((a:any, b:any) => new Date(b.created_at) - new Date(a.created_at));
+    }
+  }
+  
+  const filteredThreads = filterThreads(threads, filter, currentUser);
   return (
   
       <div>
@@ -44,11 +63,21 @@ export default function Home() {
           </div>
         }
         <div className="flex flex-col gap-2">
-          {threads.map((thread)=> {
+          <h1 className="text-xl font-bold">All Threads</h1>
+          <label className="label">Sort by:</label>
+          <select className="input" onChange={(e:React.ChangeEvent<HTMLSelectElement>) => setFilter(e.target.value)}>
+            <option value="all">Date Posted</option>
+            <option value="relevance">Relevance</option>
+            <option value="mine">My Threads</option>
+          </select>
+          {/* {threads.filter(threads.users.name === user.name).map((thread)=> {
             return <CardDash data={thread} />
           
           
-          })}
+          })} */}
+          {filteredThreads.map((thread:any) => (
+            <CardDash key={thread.id} data={thread} />
+          ))}
         </div>
       </div>
   

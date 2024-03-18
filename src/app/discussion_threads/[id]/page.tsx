@@ -28,6 +28,7 @@ export default function Threadview() {
     const [thread, setThread] = useState<Thread>({} as Thread)
     const {user} = useAuth();
     const [reloadComments, setReloadComments] = useState(false);
+    const [commentText, setCommentText] = useState<string | null >(null);
     useEffect(()=> {        
         const getData = async () => {
       
@@ -40,6 +41,11 @@ export default function Threadview() {
                 
                 })
                 const data = await response.json();
+                if (data === null) {
+                    router.push("/")
+                    toast.error('Thread not found');
+                    return
+                }
                 setThread(data);
               } catch(error) {
                 console.error('Error fetching threads', error);
@@ -57,6 +63,10 @@ export default function Threadview() {
             router.push('/login');
             return;
         }
+        if(commentText === null) {
+            toast.error('Comment cannot be empty');
+            return;
+        }
         const data = { content: e.target[0].value, user_id: 1, thread_id: thread.id}
         try {
             const response = await fetch('/api/comments', {
@@ -68,6 +78,7 @@ export default function Threadview() {
             })
             if (response.ok) {
                 toast.success('Comment created');
+                setCommentText(null);
                 setReloadComments(!reloadComments);
             }
         } catch(error) {
@@ -144,18 +155,7 @@ export default function Threadview() {
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
-                        {/* <form>
-                            <button className="bg-red-100 border-red-500 text-red-700 flex items-center gap-2 border rounded py-2 px-4" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-trash">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M4 7l16 0"></path><path d="M10 11l0 6"></path>
-                            <path d="M14 11l0 6"></path>
-                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                            </svg>
-                            <span>Delete</span>
-                            </button>
-                        </form>     */}
+                       
                     </div>
                     </div>
             }
@@ -166,7 +166,7 @@ export default function Threadview() {
                 <form className='mt-8' onSubmit={handleSubmitComment}>
                 
                     <p>
-                    <textarea placeholder="Add a comment" className="input !p-4" required ></textarea>
+                    <textarea placeholder="Add a comment" value={commentText || ""} onChange={(e)=> setCommentText(e.target.value)} className="input !p-4" required ></textarea>
                     </p>
                     <p>
                     <input type="submit" className="button mt-4"/>

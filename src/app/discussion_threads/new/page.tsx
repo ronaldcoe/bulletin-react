@@ -4,6 +4,7 @@
 import toast from 'react-hot-toast';
 import { useRequireAuth } from '../../components/useRequireAuth'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 export default function NewThread() {
 
     const user = useRequireAuth();
@@ -13,6 +14,8 @@ export default function NewThread() {
     const [content, setContent] = useState('');
     const [locked, setLocked] = useState(false);
 
+    const router = useRouter();
+    
     const handleSubmit = async (e:any) => {
         e.preventDefault();
         const data = { title, content, user_id: user?.id, locked}
@@ -26,6 +29,7 @@ export default function NewThread() {
             })
             if (response.ok) {
                 toast.success('Thread created');
+                router.push(`/`);
             }
         } catch(error) {
             console.error('Error creating thread', error);

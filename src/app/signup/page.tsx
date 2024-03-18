@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import {useRouter} from 'next/navigation';
 export default function Signup () {
     const [name, setName] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
     const [passwordConfirmation, setPasswordConfirmation] = useState<string | null>(null);
 
+    const router = useRouter();
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
@@ -22,6 +24,7 @@ export default function Signup () {
             })
             if (response.ok) {
                 toast.success(response.statusText);
+                router.push('/login');
             } else {
                 toast.error(response.statusText);
             }

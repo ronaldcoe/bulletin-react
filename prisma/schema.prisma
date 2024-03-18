@@ -21,8 +21,8 @@ model comments {
   discussion_thread_id BigInt
   created_at           DateTime           @db.Timestamp(6)
   updated_at           DateTime           @db.Timestamp(6)
-  users                users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_03de2dc08c")
-  discussion_threads   discussion_threads @relation(fields: [discussion_thread_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_9f58e90430")
+  users                users              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rails_03de2dc08c")
+  discussion_threads   discussion_threads @relation(fields: [discussion_thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rails_9f58e90430")
 
   @@index([discussion_thread_id], map: "index_comments_on_discussion_thread_id")
   @@index([user_id], map: "index_comments_on_user_id")
@@ -36,7 +36,7 @@ model discussion_threads {
   user_id    BigInt
   created_at DateTime   @db.Timestamp(6)
   updated_at DateTime   @db.Timestamp(6)
-  comments   comments[]
+  comments   comments[] 
   users      users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_db22b5e7b4")
   likes      likes[]
 
@@ -46,11 +46,11 @@ model discussion_threads {
 model likes {
   id                   BigInt             @id @default(autoincrement())
   user_id              BigInt
-  discussion_thread_id BigInt
+  discussion_thread_id BigInt       
   created_at           DateTime           @db.Timestamp(6)
   updated_at           DateTime           @db.Timestamp(6)
-  users                users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_1e09b5dabf")
-  discussion_threads   discussion_threads @relation(fields: [discussion_thread_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_21ee0d1bf3")
+  users                users              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rails_1e09b5dabf")
+  discussion_threads   discussion_threads @relation(fields: [discussion_thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rails_21ee0d1bf3")
 
   @@index([discussion_thread_id], map: "index_likes_on_discussion_thread_id")
   @@index([user_id], map: "index_likes_on_user_id")
