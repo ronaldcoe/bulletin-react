@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
     const { email, password } = await request.json();
-    console.log("here")
+
     // Validate the user input
     if (!email || !password) {
         return new Response(JSON.stringify({ message: 'Email and password are required' }), {

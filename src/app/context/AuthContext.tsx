@@ -1,9 +1,13 @@
 "use client"
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import Cookies from 'js-cookie';
+import { User } from '../interfaces/User';
+import toast from 'react-hot-toast';
+
 
 interface AuthContextType {
-  user: any; // Consider defining a more specific type for your user object
-  login: (email: string, password: string) => Promise<void>;
+  user: User | null;
+  login: (email: string, password: string) => Promise<User | null>;
   logout: () => void;
 }
 
@@ -14,10 +18,23 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<any>(null); // Consider defining a more specific type for your user object
+  const [user, setUser] = useState<any>(null); 
+
+  
+  useEffect(() => {
+    const rehydrateUser = async () => {
+      const token = Cookies.get('userToken');
+      if (token) {
+        
+        setUser(JSON.parse(token));
+      }
+    };
+
+    rehydrateUser();
+  }, []);
 
   const login = async (email: string, password: string) => {
-    // Implement login logic here, possibly setting the user state
+    
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
@@ -27,16 +44,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             },
             });
             const data = await response.json();
+            if (!response.ok) {
+              throw new Error('Login failed');
+            }
             setUser(data.user);
+            Cookies.set('userToken', JSON.stringify(data.user), { expires: 7 });
+            return data
     } catch (error) {
-        console.error('Login failed', error);
-        
+        return null        
     }
   };
 
   const logout = () => {
     setUser(null);
-    // Clear cookies or any storage used for the session
+    toast.success('Logged out');
+    Cookies.remove('userToken');
+  
   };
 
   return (
