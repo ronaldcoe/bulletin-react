@@ -20,7 +20,7 @@ export default function ThreadCard({data}: CardDashProps) {
     const [likedByUser, setLikedByUser] = useState(false);
     const [likeid, setLikeid] = useState<string | null>(null);
 
-
+    const [likesCount, setLikesCount] = useState(data.likes.length);
 
     useEffect(()=> {
         if(user) {
@@ -65,8 +65,9 @@ export default function ThreadCard({data}: CardDashProps) {
             if (like.id) {
                 setLikedByUser(true);
                 setLikeid(like.id);
+                setLikesCount(likesCount + 1);
                 toast.success('You liked this thread');
-                // window.location.reload();
+              
             }
          
         } catch(error) {
@@ -91,7 +92,8 @@ export default function ThreadCard({data}: CardDashProps) {
             if (response.ok) {
                 setLikedByUser(false);
                 toast.success('You unliked this thread');
-                // window.location.reload();
+                setLikesCount(likesCount - 1);
+              
 
             }
         } catch(error) {
@@ -117,7 +119,7 @@ export default function ThreadCard({data}: CardDashProps) {
             <h1 className="text-2xl font-bold block mt-4">{data.title}</h1>
             <p className="mt-4">{data.content}</p>
             <div className="mt-4 flex gap-4 items-center">
-                <span className="text-sm">{data.likes.length} Likes</span>
+                <span className="text-sm">{likesCount} Likes</span>
                 <div className="flex gap-1 items-center cursor-pointer">
                     {
                         likedByUser ?

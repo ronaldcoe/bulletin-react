@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import { usePathname } from 'next/navigation'
 import { AuthProvider } from './context/AuthContext';
 import "./globals.css";
+import Footer from "./components/Footer";
 
 
 
@@ -24,14 +25,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       
-      <body>
+      <body className="flex flex-col min-h-screen">
         <AuthProvider>
         {pathname !== '/login' && pathname !== '/signup' && <Navbar />}
         <Toaster position="top-center" />
-          <main className="max-w-[1000px] mt-28 px-5 mx-auto">
+          <main className="w-full max-w-[1000px] mt-28 px-5 mx-auto flex-grow">
             {children}
           </main>
+          {pathname !== '/login' && pathname !== '/signup' && <Footer />}
         </AuthProvider>  
+
       </body>
       
       

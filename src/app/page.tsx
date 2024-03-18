@@ -44,24 +44,18 @@ export default function Home() {
 
       case 'all':
       default:
-        return threads.slice().sort((a:any, b:any) => new Date(b.created_at) - new Date(a.created_at));
+        return threads.slice().sort((a: any, b: any) => +new Date(b.created_at) - +new Date(a.created_at));
+
     }
   }
-  
+
   const filteredThreads = filterThreads(threads, filter, currentUser);
   return (
   
       <div>
         <a href="/discussion_threads/new" 
         className="button mb-8 text-center w-full md:w-fit block">Create New Thread</a>
-        {
-          threads.length===0 && 
-          <div role="status" className="w-full animate-pulse">
-              <div className="h-[200px] bg-gray-200 rounded-md w-full mb-4"></div>
-              <div className="h-[200px] bg-gray-200 rounded-md w-full mb-4"></div>
-              <span className="sr-only">Loading...</span>
-          </div>
-        }
+        
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-bold">All Threads</h1>
           <label className="label">Sort by:</label>
@@ -75,6 +69,14 @@ export default function Home() {
           
           
           })} */}
+          {
+          threads.length===0 && 
+          <div role="status" className="w-full animate-pulse">
+              <div className="h-[200px] bg-gray-200 rounded-md w-full mb-4"></div>
+              <div className="h-[200px] bg-gray-200 rounded-md w-full mb-4"></div>
+              <span className="sr-only">Loading...</span>
+          </div>
+        }
           {filteredThreads.map((thread:any) => (
             <CardDash key={thread.id} data={thread} />
           ))}
