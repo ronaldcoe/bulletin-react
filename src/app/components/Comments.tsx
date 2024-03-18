@@ -25,6 +25,7 @@ export default function Comments({reload}:CommentProps) {
     const [comments, setComments] = useState([])
     const params = useParams()
     const{user} = useAuth();
+
     useEffect(()=> {        
         const getData = async () => {
             try {
@@ -105,25 +106,25 @@ export default function Comments({reload}:CommentProps) {
                                         </div>
                                         <p className="mt-2">{comment.content}</p>
                                         {user && user.id === comment.users.id &&
-                                         <AlertDialog>
-                                         <AlertDialogTrigger className='text-xs text-start underline text-red-700 cursor-pointer'>Delete Comment</AlertDialogTrigger>
-                                         <AlertDialogContent>
-                                             <AlertDialogHeader>
-                                             <AlertDialogTitle>Are you sure you want delete this comment?</AlertDialogTitle>
-                                             <AlertDialogDescription>
-                                                 This action cannot be undone.
-                                             </AlertDialogDescription>
-                                             </AlertDialogHeader>
-                                             <AlertDialogFooter>
-                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                             <AlertDialogAction
-                                              className='bg-blue-500'
-                                              onClick={()=> handleDeleteComment(comment.id)}>Continue
-                                              </AlertDialogAction>
-                                             </AlertDialogFooter>
-                                         </AlertDialogContent>
-                                     </AlertDialog>
-                                         }
+                                        <AlertDialog>
+                                            <AlertDialogTrigger className='text-xs text-start underline text-red-700 cursor-pointer'>Delete Comment</AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you sure you want delete this comment?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone.
+                                                </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                className='bg-blue-500'
+                                                onClick={()=> handleDeleteComment(comment.id)}>Continue
+                                                </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                        }
                                     </div>
                                     </div>
                                 </li>

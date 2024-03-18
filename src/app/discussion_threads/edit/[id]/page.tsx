@@ -43,7 +43,7 @@ export default function Edit() {
         e.preventDefault();
         const data = {id:params.id, title, content, user_id: user?.id, locked}
         try {
-            const response = await fetch('/api/threads', {
+            const response = await fetch('/api/thread', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
