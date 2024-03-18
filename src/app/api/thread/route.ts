@@ -5,12 +5,11 @@ const prisma = new PrismaClient();
 export async function GET(request: Request) {
     const url = new URL(request.url);
     const threadId = url.searchParams.get("id");
-    console.log(threadId)
+
     let id: bigint | number | undefined;
     if (threadId !== null) {
         try {
-            id = BigInt(threadId); // Use BigInt if your database type is bigint
-            // For numeric IDs, you could use: id = parseInt(threadId, 10);
+            id = BigInt(threadId); 
         } catch (error) {
             console.error('Invalid thread ID format', error);
             return new Response(JSON.stringify({ message: 'Invalid thread ID format' }), {

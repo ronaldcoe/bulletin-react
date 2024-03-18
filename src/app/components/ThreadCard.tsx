@@ -18,15 +18,17 @@ export default function ThreadCard({data}: CardDashProps) {
     const {user} = useAuth();
 
     const [likedByUser, setLikedByUser] = useState(false);
+    const [likeid, setLikeid] = useState<string | null>(null);
 
 
 
     useEffect(()=> {
         if(user) {
             const liked = data.likes.find((like) => like.user_id === user.id);
-        
+            
             if(liked) {
                 setLikedByUser(true);
+                setLikeid(liked.id);
             }
         }
     }, [data.likes, user])
@@ -46,6 +48,11 @@ export default function ThreadCard({data}: CardDashProps) {
     }
 
     const handleLike =  async () => {
+        if(!user) {
+            toast.error('You must be logged in to like a thread');
+            router.push('/login');
+            return;
+        }
         try {
             const response = await fetch('/api/likes', {
                 method: 'POST',
@@ -57,8 +64,9 @@ export default function ThreadCard({data}: CardDashProps) {
             const like = await response.json();
             if (like.id) {
                 setLikedByUser(true);
+                setLikeid(like.id);
                 toast.success('You liked this thread');
-                window.location.reload();
+                // window.location.reload();
             }
          
         } catch(error) {
@@ -69,21 +77,21 @@ export default function ThreadCard({data}: CardDashProps) {
     const handleUnlike = async () => {
         try {
             
-            const liked = data.likes.find((like) => like.user_id === user?.id);
+            // const liked = data.likes.find((like) => like.user_id === user?.id);
       
             const response = await fetch('/api/likes', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id: liked?.id})
+                body: JSON.stringify({id: likeid})
             })
             const unlike = await response.json();
           
             if (response.ok) {
                 setLikedByUser(false);
                 toast.success('You unliked this thread');
-                window.location.reload();
+                // window.location.reload();
 
             }
         } catch(error) {

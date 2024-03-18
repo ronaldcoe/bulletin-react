@@ -3,6 +3,7 @@ export interface Thread {
     title: string;
     content: string;
     user_id: string;
+    locked: boolean
     created_at: string;
     updated_at: string;
     users: {
