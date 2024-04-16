@@ -29,6 +29,8 @@ export default function Threadview() {
     const {user} = useAuth();
     const [reloadComments, setReloadComments] = useState(false);
     const [commentText, setCommentText] = useState<string | null >(null);
+
+ 
     useEffect(()=> {        
         const getData = async () => {
       
@@ -67,7 +69,7 @@ export default function Threadview() {
             toast.error('Comment cannot be empty');
             return;
         }
-        const data = { content: e.target[0].value, user_id: 1, thread_id: thread.id}
+        const data = { content: e.target[0].value, user_id: user?.id, thread_id: thread.id}
         try {
             const response = await fetch('/api/comments', {
                 method: 'POST',
